@@ -23,12 +23,27 @@ approach, not evidence that the approach works.
 - No accounts, no data collection, no storage. All money in the simulations is fake.
 - Outside the simulations, the app does not use the tricks it teaches.
 
-## Run it
+## Try it
 
-Open `index.html` in a browser. It is one self-contained file with no build step and no backend.
-The only network requests are for Google Fonts.
+Live: https://michpalm.github.io/be-ware-learning/
+
+To run it yourself, serve the folder with any static web server (for example `npx serve`) and open
+`index.html`. There is no build step and no backend. The fonts are included in the repository, so the
+page makes no requests to third parties.
 
 ## Credits
 
-Created by [michpalm](https://github.com/michpalm), a game designer and developer in Sweden, with
-[Claude](https://claude.ai) (Anthropic) as co-author.
+Created by Michael Palma ([michpalm](https://github.com/michpalm)), a game design student in Sweden,
+with [Claude](https://claude.ai) (Anthropic) as co-author.
+
+Fonts: [Atkinson Hyperlegible](https://www.brailleinstitute.org/freefont/) (Braille Institute),
+[Familjen Grotesk](https://github.com/Familjen-Sthlm/Familjen-Grotesk) (Familjen STHLM) and
+[Lilita One](https://fonts.google.com/specimen/Lilita+One) (Juan Montoreano), all under the SIL Open
+Font License 1.1. The licence texts are in [`fonts/`](fonts/).
+
+## Licence
+
+Copyright © 2026 Michael Palma.
+
+Licensed under the EUPL, version 1.2 ([`LICENSE`](LICENSE)). You may use, study, change and share
+BeWare. If you distribute a changed version, it must stay under the EUPL or a compatible licence.
