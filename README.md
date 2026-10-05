@@ -33,8 +33,8 @@ page makes no requests to third parties.
 
 ## Credits
 
-Created by Michael Palma ([michpalm](https://github.com/michpalm)), a game design student in Sweden,
-with [Claude](https://claude.ai) (Anthropic) as co-author.
+Created by Michael Palma ([michpalm](https://github.com/michpalm)), a software engineer and game design
+student in Sweden, with [Claude](https://claude.ai) (Anthropic) as co-author.
 
 Fonts: [Atkinson Hyperlegible](https://www.brailleinstitute.org/freefont/) (Braille Institute),
 [Familjen Grotesk](https://github.com/Familjen-Sthlm/Familjen-Grotesk) (Familjen STHLM) and
