@@ -1,10 +1,11 @@
 # BeWare
 
-A hands-on learning prototype about dark patterns and manipulative design, for teens (13 to 17) first.
+A hands-on prototype that teaches teens (13 to 17) to spot dark patterns: design that is built to
+steer you into spending more time or money than you planned.
 
-Apps, games and websites are designed. Some of that design helps you. Some of it is built to make you
-spend more time or money than you planned. BeWare lets you try three fake apps (a mobile game, a web
-shop and a social feed) and learn to spot the tricks in them. Each scenario runs in three steps:
+Apps, games and websites are designed. Some of that design helps you, and some of it works against
+you. BeWare lets you try three fake apps (a mobile game, a web shop and a social feed) and learn to
+spot the tricks in them. Each scenario runs in three steps:
 
 1. **Try it**: use the fake app with the tricks active and no commentary.
 2. **See it**: every trick is numbered on screen and explained in plain words.
@@ -26,3 +27,8 @@ approach, not evidence that the approach works.
 
 Open `index.html` in a browser. It is one self-contained file with no build step and no backend.
 The only network requests are for Google Fonts.
+
+## Credits
+
+Created by [michpalm](https://github.com/michpalm), a game designer and developer in Sweden, with
+[Claude](https://claude.ai) (Anthropic) as co-author.
