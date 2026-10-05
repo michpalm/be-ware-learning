@@ -1,0 +1,895 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Spot the Trick</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Lilita+One&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F3F5F7; --surface:#FFFFFF; --ink:#131A21; --muted:#46525C; --line:#C5CED6;
+  --accent:#0A5C6B; --accent-ink:#FFFFFF; --good:#11602F; --bad:#9B1C1C; --focus:#0B57D0;
+  --ui:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+  --loud:'Lilita One','Arial Rounded MT Bold',Impact,'Arial Black',sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1317; --surface:#172027; --ink:#EEF2F5; --muted:#AAB7C1; --line:#35434E;
+    --accent:#5CC6D6; --accent-ink:#06222A; --good:#6FD39A; --bad:#FF9B9B; --focus:#8AB4FF;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1317; --surface:#172027; --ink:#EEF2F5; --muted:#AAB7C1; --line:#35434E;
+  --accent:#5CC6D6; --accent-ink:#06222A; --good:#6FD39A; --bad:#FF9B9B; --focus:#8AB4FF;
+}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 1rem)}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1.0625rem/1.55 var(--ui);}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:.5rem;top:-4rem;background:var(--ink);color:var(--bg);padding:.6rem 1rem;border-radius:6px;z-index:50}
+.skip:focus{top:.5rem}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+button,select,input{font:inherit;color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 1.25rem}
+header.top{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1rem 1.25rem;max-width:1120px;margin:0 auto;border-bottom:2px solid var(--ink)}
+.brand{background:none;border:0;padding:.25rem 0;font-weight:700;font-size:1.15rem;cursor:pointer;letter-spacing:-.01em}
+.tools{display:flex;gap:.6rem;align-items:center}
+.tools select{background:var(--surface);border:2px solid var(--ink);border-radius:8px;padding:.4rem .6rem;min-height:44px}
+main{max-width:1120px;margin:0 auto;padding:2rem 1.25rem 3rem;outline:none}
+footer{max-width:1120px;margin:0 auto;padding:1.25rem;border-top:1px solid var(--line);display:flex;gap:1rem;flex-wrap:wrap;justify-content:space-between;color:var(--muted);font-size:.95rem}
+footer p{margin:0}
+.linkbtn{background:none;border:0;padding:.3rem 0;text-decoration:underline;cursor:pointer;color:inherit}
+h1{font-size:clamp(2.1rem,5.5vw,3.4rem);line-height:1.05;letter-spacing:-.025em;margin:0 0 1rem;font-weight:700}
+h1:focus,h2:focus{outline:none}
+.h2{font-size:1.35rem;margin:2.5rem 0 .8rem;font-weight:700}
+.lead{font-size:1.25rem;max-width:58ch;margin:0}
+.how{list-style:none;counter-reset:h;padding:0;margin:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.25rem}
+.how li{counter-increment:h;border-top:4px solid var(--ink);padding-top:.7rem;display:grid;gap:.25rem}
+.how li::before{content:counter(h);font-weight:700;color:var(--muted)}
+.how b{font-size:1.15rem}
+.rows{list-style:none;margin:0;padding:0;display:grid;gap:.9rem}
+.row{display:grid;grid-template-columns:96px 1fr;gap:1.1rem;align-items:center;width:100%;text-align:left;background:var(--surface);border:2px solid var(--ink);border-radius:10px;padding:.8rem;cursor:pointer}
+.row:hover{background:color-mix(in srgb,var(--surface) 88%,var(--accent))}
+.rtxt{display:grid;gap:.15rem}
+.rtxt b{font-size:1.2rem}
+.rtxt small{color:var(--muted);font-size:.95rem}
+.swatch{height:76px;border-radius:6px;display:block}
+.sw-game{background:radial-gradient(circle at 70% 35%,#FFD60A 0 16%,transparent 17%),linear-gradient(#2B0F6B,#17083D)}
+.sw-shop{background:linear-gradient(90deg,#fff 0 55%,#FF5A1F 55%);border:2px solid #222}
+.sw-social{background:radial-gradient(circle at 30% 60%,#FF3E9A 0 18%,transparent 19%),#0D1030}
+.sw-quiz{background:repeating-linear-gradient(45deg,var(--line) 0 8px,transparent 8px 16px);border:2px solid var(--ink)}
+.back{background:none;border:0;padding:.3rem 0;margin-bottom:.75rem;cursor:pointer;text-decoration:underline;font-weight:700}
+.stepper{list-style:none;counter-reset:s;display:flex;gap:.5rem;padding:0;margin:0 0 1.5rem;flex-wrap:wrap}
+.stepper li{counter-increment:s}
+.stepper button{display:flex;gap:.5rem;align-items:center;background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:.4rem 1rem .4rem .5rem;min-height:44px;cursor:pointer;font-weight:700;color:var(--muted)}
+.stepper button::before{content:counter(s);display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--line);color:var(--ink)}
+.stepper button[aria-current="step"]{border-color:var(--ink);color:var(--ink)}
+.stepper button[aria-current="step"]::before{background:var(--ink);color:var(--bg)}
+.stepper button:disabled{opacity:.6;cursor:not-allowed}
+.split{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:2.5rem;align-items:start}
+.phonewrap{position:sticky;top:1rem;align-self:start}
+.phone{border:3px solid var(--ink);border-radius:22px;overflow:hidden;background:#000}
+.scroll{height:min(640px,calc(100svh - 7.5rem));overflow-y:auto;overscroll-behavior:contain}
+.simbar{background:var(--ink);color:var(--bg);font-size:.9rem;padding:.45rem .8rem;text-align:center;font-weight:700}
+.stage-wrap{position:relative}
+.overlay{position:absolute;inset:0;pointer-events:none}
+.mark{position:absolute;outline:3px solid #fff;box-shadow:0 0 0 6px #111;border-radius:6px}
+.mark.on{box-shadow:0 0 0 6px #111,0 0 0 10px #FFD60A}
+.badge{position:absolute;left:-8px;top:-8px;min-width:28px;height:28px;border-radius:14px;background:#111;color:#fff;border:2px solid #fff;display:grid;place-items:center;font:700 .9rem/1 var(--ui);padding:0 .3rem}
+.mark.fair{outline-color:#fff;box-shadow:0 0 0 6px #0E6B3A}
+.mark.fair .badge{background:#0E6B3A}
+.hit{position:absolute;pointer-events:auto;border:0;padding:0;cursor:pointer;background:rgba(255,255,255,.06);outline:2px dashed #fff;box-shadow:0 0 0 4px rgba(0,0,0,.75);border-radius:6px}
+.hit:hover{background:rgba(255,255,255,.22)}
+.hit.on{background:rgba(255,214,10,.3);outline:3px solid #fff;box-shadow:0 0 0 6px #111,0 0 0 9px #FFD60A}
+.hit.found{background:rgba(40,200,110,.3);outline:3px solid #fff;box-shadow:0 0 0 6px #0E6B3A}
+.hit.missed{background:rgba(255,255,255,.1);outline:3px solid #fff;box-shadow:0 0 0 6px #111}
+.hit.wrong{background:rgba(255,80,80,.3);outline:3px solid #fff;box-shadow:0 0 0 6px #9B1C1C}
+.hit:focus-visible{outline:4px solid #fff;box-shadow:0 0 0 4px #fff,0 0 0 9px #0B57D0}
+.hit .badge{background:#111}
+.hit.found .badge{background:#0E6B3A}.hit.wrong .badge{background:#9B1C1C}
+.panel{min-width:0}
+.panel h2{font-size:1.7rem;margin:0 0 .6rem;letter-spacing:-.015em;line-height:1.15}
+.panel p{max-width:62ch}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;min-height:44px;padding:.55rem 1.1rem;border:2px solid var(--ink);border-radius:8px;background:transparent;font-weight:700;cursor:pointer}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.btns{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.2rem}
+.hint{color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--ink);border-radius:8px;padding:1rem 1.1rem;margin:0 0 1rem}
+.card.fairc{border-left-color:var(--good)}
+.card header{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap}
+.card h3{margin:0;font-size:1.15rem}
+.num{display:grid;place-items:center;min-width:30px;height:30px;border-radius:6px;background:var(--ink);color:var(--bg);font-weight:700}
+.fairc .num{background:var(--good);color:var(--bg)}
+.chip{font-size:.85rem;font-weight:700;border:2px solid var(--ink);border-radius:999px;padding:.05rem .6rem}
+.say{font-size:1.2rem;font-weight:700;margin:.7rem 0 .5rem;line-height:1.35}
+.card p{margin:.4rem 0}
+.src{list-style:none;padding:0;margin:.6rem 0 .8rem;display:flex;gap:.4rem;flex-wrap:wrap}
+.src li{font-size:.85rem;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:.1rem .5rem}
+.count{font-weight:700}
+.result{border:2px solid var(--ink);border-radius:10px;padding:1rem 1.1rem;margin:1.2rem 0;background:var(--surface)}
+.result h3{margin:0 0 .4rem}
+.result:focus{outline:3px solid var(--focus)}
+.legend{color:var(--muted);font-size:.95rem}
+.dec{border:0;padding:0;margin:1.6rem 0 0;min-width:0}
+.dec legend{font-weight:700;padding:0;margin-bottom:.6rem;font-size:1.1rem}
+.opt{display:block;width:100%;text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:8px;padding:.7rem .9rem;margin:0 0 .5rem;cursor:pointer}
+.opt:hover{border-color:var(--ink)}
+.opt.sel{border-color:var(--ink);background:color-mix(in srgb,var(--surface) 85%,var(--accent))}
+.fb{min-height:1.5em;margin:.3rem 0 0}
+.k-good{color:var(--good)}.k-push{color:var(--bad)}.k-ok{color:var(--muted)}
+.done{margin-top:1.6rem;padding-top:1rem;border-top:4px solid var(--ink)}
+.note{color:var(--muted);font-size:.95rem;max-width:62ch}
+fieldset.q{border:0;border-top:2px solid var(--line);padding:1rem 0;margin:0}
+fieldset.q legend{font-weight:700;padding:0 .5rem 0 0}
+.qopt{display:flex;gap:.7rem;align-items:center;padding:.5rem .6rem;border:2px solid var(--line);border-radius:8px;margin:.4rem 0;background:var(--surface);min-height:44px;cursor:pointer}
+.qopt input{width:22px;height:22px;accent-color:var(--accent)}
+.qopt:has(input:checked){border-color:var(--ink)}
+.err{color:var(--bad);font-weight:700}
+.qres{padding-left:1.2rem}
+.qres li{margin:0 0 1.1rem}
+.score{font-size:1.6rem;font-weight:700;margin:.2rem 0}
+.prose{max-width:66ch}
+.prose h2{font-size:1.25rem;margin:1.8rem 0 .4rem}
+.prose ul{padding-left:1.2rem}
+
+/* ---------- simulations (deliberately loud, fixed colours, not themed) ---------- */
+.sim{padding:12px;display:grid;gap:10px;font-family:var(--ui);line-height:1.35}
+.sim p{margin:0}
+.sim button{font-family:inherit}
+.sim .tiny{font-size:.68rem;color:#9a9a9a}
+.sim .linkbtn{color:inherit}
+/* game */
+.sim-game{background:linear-gradient(#2B0F6B,#17083D);color:#fff}
+.g-top{display:flex;justify-content:space-between;align-items:center;font-family:var(--loud);font-size:1.3rem}
+.g-gems{display:flex;gap:.3rem;align-items:center;background:#0e0430;border-radius:999px;padding:.15rem .7rem}
+.gem{width:20px;height:20px;fill:#4DE3FF;stroke:#0A3D4D;stroke-width:1.5}
+.g-pet svg{display:block;margin:0 auto;width:110px}
+.g-card{background:rgba(255,255,255,.1);border-radius:12px;padding:.7rem;display:grid;gap:.5rem}
+.g-streak{grid-template-columns:auto 1fr;align-items:center}
+.g-streak .g-btn{grid-column:1/-1}
+.g-flame{font-size:2rem}
+.g-streak b,.g-offer b,.g-shop>b,.g-chest b{font-family:var(--loud);font-weight:400;font-size:1.15rem}
+.g-btn{background:#FFD60A;color:#2B0F6B;border:0;border-bottom:4px solid #B08F00;border-radius:12px;padding:.55rem 1rem;font-family:var(--loud)!important;font-size:1.05rem;cursor:pointer;min-height:44px}
+.g-btn.alt{background:#fff;border-bottom-color:#999}
+.g-ribbon{background:#FF2E63;color:#fff;font-family:var(--loud);padding:.1rem .6rem;border-radius:6px;justify-self:start}
+.g-cd b{font-family:var(--loud);color:#FFD60A;font-size:1.4rem}
+.g-packs{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+.g-pack{background:#3B1B8F;color:#fff;border:2px solid #7b5cff;border-radius:10px;padding:.5rem .2rem;display:grid;justify-items:center;gap:.05rem;cursor:pointer;min-height:44px}
+.g-pack.best{border-color:#FFD60A}
+.g-pack b{font-family:var(--loud);font-weight:400;font-size:1.1rem}
+.g-pack small{font-size:.68rem;opacity:.65}
+.g-reels{font-family:var(--loud);font-size:1.6rem;letter-spacing:.3rem;min-height:2rem}
+.g-toast{background:#FF2E63;border-radius:12px;padding:.6rem;display:grid;gap:.4rem}
+.g-fair{display:flex;justify-content:space-between;gap:.6rem;align-items:center;background:rgba(255,255,255,.1);border-radius:12px;padding:.6rem}
+.g-msg{min-height:1.3em;color:#FFD60A;font-weight:700}
+/* shop */
+.sim-shop{background:#fff;color:#222}
+.s-bar{font-weight:700;letter-spacing:.04em;border-bottom:2px solid #222;padding-bottom:.4rem}
+.s-photo svg{width:100%;height:auto;display:block;border-radius:8px}
+.sim-shop h3{margin:0;font-size:1.3rem}
+.s-price{font-size:1.5rem;font-weight:700}
+.s-scar{color:#D11;font-weight:700}
+.s-watch{color:#555;font-size:.9rem}
+.sim-shop select{border:1px solid #888;border-radius:6px;padding:.3rem;background:#fff;color:#222}
+.s-addon{display:flex;gap:.5rem;align-items:center;background:#FFF3E8;border-radius:8px;padding:.5rem}
+.s-addon input{width:20px;height:20px}
+.s-club{background:#FFE8DC;border:2px solid #FF5A1F;border-radius:10px;padding:.6rem;display:grid;gap:.3rem}
+.s-club b{font-size:1.2rem;color:#C2370A}
+.s-btn{background:#FF5A1F;color:#fff;border:0;border-radius:8px;padding:.7rem;font-weight:700;font-size:1.05rem;cursor:pointer;min-height:44px}
+.s-btn.dark{background:#222}
+.s-total{display:grid;gap:.1rem;border-top:1px solid #ddd;padding-top:.5rem}
+.s-wait{border:2px solid #222;border-radius:10px;padding:.7rem;display:grid;gap:.5rem;background:#FFFBE0}
+.s-wait:focus{outline:3px solid #0B57D0}
+.s-no{background:none;border:0;color:#9a9a9a;font-size:.72rem;text-decoration:underline;cursor:pointer;justify-self:start;padding:.2rem 0}
+.s-member{border:1px dashed #888;border-radius:10px;padding:.6rem;display:grid;gap:.5rem}
+.s-member:focus-within{outline:none}
+.s-member .tiny{background:none;border:0;text-decoration:underline;cursor:pointer;justify-self:start;padding:.2rem 0}
+.s-msg{min-height:1.3em;font-weight:700;color:#C2370A}
+/* social */
+.sim-soc{background:#0D1030;color:#fff}
+.o-top{display:flex;justify-content:space-between;align-items:center}
+.o-top b{font-family:var(--loud);font-weight:400;font-size:1.5rem;color:#FF3E9A}
+.o-actions{display:flex;gap:.4rem;align-items:center;padding:.15rem}
+.o-icon{background:#1d2260;color:#fff;border:0;border-radius:50%;width:44px;height:44px;font-size:1.2rem;cursor:pointer}
+.o-bell{position:relative;font-size:1.3rem;padding:.2rem .5rem}
+.o-bell i{position:absolute;right:0;top:-2px;background:#FF3E9A;color:#fff;font:700 .7rem var(--ui);border-radius:10px;padding:.05rem .35rem;font-style:normal}
+.o-live{background:#1d2260;border-radius:10px;padding:.5rem .6rem;display:flex;gap:.6rem;align-items:center}
+.avs{display:flex}.avs span{width:26px;height:26px;border-radius:50%;border:2px solid #0D1030;margin-right:-8px}
+.o-streak{background:#3a1850;border-radius:10px;padding:.5rem .6rem;display:grid;gap:.4rem}
+.o-btn{background:#FF3E9A;color:#fff;border:0;border-radius:999px;padding:.5rem 1rem;font-weight:700;cursor:pointer;min-height:44px;justify-self:start}
+.o-btn.alt{background:#fff;color:#0D1030}
+.o-feed{height:200px;overflow-y:auto;background:#151A45;border-radius:10px;padding:.5rem;display:grid;gap:.5rem;align-content:start}
+.o-post{display:flex;gap:.6rem;background:#1d2260;border-radius:8px;padding:.5rem}
+.av{flex:none;width:34px;height:34px;border-radius:50%}
+.o-post small{opacity:.7}
+.o-break{background:#fff;color:#0D1030;border-radius:10px;padding:.6rem;display:grid;gap:.5rem}
+.o-break .row2{display:flex;gap:.5rem;flex-wrap:wrap}
+.o-set{background:#1d2260;border-radius:10px;padding:.5rem .6rem;display:grid;gap:.4rem}
+.o-row{display:flex;justify-content:space-between;align-items:center;gap:.6rem;font-size:.9rem}
+.o-sw{min-width:56px;min-height:36px;border-radius:999px;border:0;background:#FF3E9A;color:#fff;font-weight:700;cursor:pointer}
+.o-sw[aria-checked="false"]{background:#555}
+.o-msg{min-height:1.3em;color:#FFD3EA;font-weight:700}
+
+/* ---------- popup for simulation responses (top right, stays until closed or replaced) ---------- */
+.popup{position:absolute;z-index:40;left:calc(100% + .75rem);top:50%;transform:translateY(-50%);width:300px;pointer-events:none}
+.pop{pointer-events:auto;position:relative;border-radius:14px;padding:.8rem 2.6rem .9rem 1rem;box-shadow:0 10px 30px rgba(0,0,0,.35);border:3px solid #111;font-family:var(--ui);line-height:1.35}
+.pop p{margin:.15rem 0 0;font-weight:700;font-size:1.02rem}
+.ptag{font-size:.78rem;font-weight:700;opacity:.8}
+.pclose{position:absolute;right:.35rem;top:.35rem;width:44px;height:44px;border:0;border-radius:50%;background:transparent;color:inherit;font-size:1.6rem;line-height:1;cursor:pointer}
+.pclose:focus-visible{outline:3px solid #fff;box-shadow:0 0 0 6px #0B57D0}
+.pop-game{background:#2B0F6B;color:#fff;border-color:#FFD60A}
+.pop-shop{background:#fff;color:#222;border-color:#FF5A1F}
+.pop-social{background:#0D1030;color:#fff;border-color:#FF3E9A}
+@media (prefers-reduced-motion:no-preference){.pop{animation:popin .22s ease-out}}
+@keyframes popin{from{transform:translateX(-18px);opacity:0}to{transform:none;opacity:1}}
+@media (max-width:900px){.popup{left:50%;transform:translate(-50%,-50%);width:min(340px,calc(100% - 2rem))}}
+@media (max-width:900px){
+  .split{grid-template-columns:minmax(0,1fr)}
+  .phonewrap{position:relative;top:0;max-width:440px}
+  .scroll{height:min(560px,72svh)}
+  .how{grid-template-columns:1fr}
+}
+@media (max-width:520px){.row{grid-template-columns:64px 1fr}.swatch{height:56px}}
+@media (prefers-reduced-motion:no-preference){.hit,.mark{transition:box-shadow .15s}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top" id="top"></header>
+<main id="main" tabindex="-1"></main>
+<footer id="foot"></footer>
+<div class="sr" id="live" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ================= i18n =================
+   To add a language: add {code,name} to LANGS and a block to I18N.
+   Missing keys fall back to English. */
+const LANGS=[{code:'en',name:'English'},{code:'sv',name:'Svenska'}];
+let lang='en';
+
+const I18N={
+en:{
+'app.title':'Spot the Trick','app.sub':'A hands-on lab about design that tries to steer you.',
+'lang':'Language','skip':'Skip to content','back':'All scenarios',
+'home.intro':'Apps, games and websites are designed. Some of that design helps you. Some of it is built to make you spend more time or money than you planned. Try three fake ones, then learn to spot the tricks.',
+'home.how':'How it works','home.choose':'Choose a scenario',
+'s1.h':'Try it','s1.p':'Use a fake game, shop or feed. No instructions, no hints.',
+'s2.h':'See it','s2.p':'Turn on the explanations. Every trick is marked and described in plain words.',
+'s3.h':'Resist it','s3.p':'Spot the tricks in a new version and choose what you would do instead.',
+'tricks':'{0} tricks to find',
+'scn.game.title':'Game','scn.game.desc':'A mobile game with daily rewards, gems and a mystery chest.',
+'scn.shop.title':'Web shop','scn.shop.desc':'Sneakers, a free trial and a checkout that wants a lot from you.',
+'scn.social.title':'Social media','scn.social.desc':'A feed that never ends, friend streaks and notifications.',
+'kind.game':'game','kind.shop':'web shop','kind.social':'feed',
+'quiz.row.h':'Check what you know','quiz.row.h2':'Check again','quiz.row.p':'Six quick questions. Take it before and after to see what changed. Nothing is saved or sent.',
+'sandbox':'Simulation. Fake money. Nothing here is real or saved.','popup.tag':'Simulation','popup.close':'Close',
+'step0.h':'Try it',
+'step0.p.game':'Play this fake mobile game the way you normally would. Tap things, ignore things, buy things. It is all pretend.',
+'step0.p.shop':'Shop in this fake web store the way you normally would. Look around, pick things, try to check out. Nothing is real.',
+'step0.p.social':'Scroll this fake social app the way you normally would. Scroll, refresh, tap. Nothing is real.',
+'step0.p2':'There is no goal and no right way to do this. Move on when you are done.',
+'step0.btn':'I am done. Show me what happened',
+'step1.h':'See it',
+'step1.p':'The {0} had {1} design tricks. Each one is numbered on the screen. Use “Show on screen” on a card to find it.',
+'show':'Show on screen','why':'Why it works:','tip':'What you can do:','srcs':'Related to',
+'tried':'You interacted with this',
+'fair.h':'Not a trick: fair design',
+'fair.game':'This shows you real information and makes it easy to stop. A reminder that helps you decide is not manipulation.',
+'fair.shop':'The full price is clear, includes VAT, and the return policy is easy to see. Good design makes the cost easy to understand.',
+'fair.social':'Two equal buttons: stopping is as easy as continuing. That helps you decide.',
+'step1.next':'Next: resist it',
+'step2.h':'Resist it',
+'step2.p1':'This is a new version. Select the things you think are tricks. Some things are fair, so do not mark everything.',
+'marked':'Marked: {0}','check':'Check my answers',
+'res.h':'Your result','res.p':'You found {0} of {1} tricks.','res.wrong':'Marked by mistake: {0}.','res.none':'No mistakes.','res.missed':'You missed:',
+'res.legend':'On screen: ✓ found, ! missed, ✗ not a trick.',
+'st.found':'Found','st.missed':'Missed','st.wrong':'Not a trick','flag':'Mark as a trick:',
+'dec.h':'What would you do?',
+'kind.good':'Good move','kind.ok':'Understandable','kind.push':'That is the trick working',
+'done.h':'Scenario done','done.p':'Try another scenario, or check what you know.',
+'btn.another':'Pick another scenario','btn.quiz':'Check what you know',
+'quiz.h':'Check what you know','quiz.p':'Six short questions. Pick the trick that fits each description. Nothing is saved or sent.',
+'quiz.submit':'Check answers','quiz.missing':'Please answer every question.',
+'quiz.score':'Score: {0} of {1}','quiz.cmp':'First time: {0}. Latest: {1}. (out of {2})',
+'quiz.right':'Correct.','quiz.wrong':'Not quite. Answer: {0}.','quiz.again':'Try again',
+'quiz.note':'This quiz is a demo. Six questions cannot measure learning. A real evaluation needs more questions, different versions and enough participants.',
+'foot':'Prototype. Collects nothing, stores nothing.','about.link':'About this prototype',
+'about.h':'About this prototype',
+'about.p1':'Spot the Trick is a proof of concept for an experiential approach to manipulation literacy. It was made to accompany a policy submission on the EU KIDS Act (COM(2026) 681 final). It has not been shown to work. It shows how the idea could look in practice.',
+'about.h.priv':'Privacy','about.p.priv':'This page has no accounts, collects no data and stores nothing. Quiz scores exist only until you close the tab.',
+'about.h.rule':'Design rule','about.p.rule':'Outside the simulations, this app tries not to use the tricks it teaches: no streaks, no countdowns, no rewards for coming back and no guilt-trip wording. The tiny grey text and loud colours inside the simulations are deliberate.',
+'about.h.lang':'Languages','about.p.lang':'Available now: English and Swedish. The goal is to cover all official EU languages. Translations need review by native speakers.',
+'about.h.a11y':'Accessibility','about.p.a11y':'Accessibility is a core requirement. The prototype uses semantic HTML, keyboard controls, visible focus and respects reduced motion. A formal check against WCAG (target level 2.2 AA) has not been done yet and is planned.',
+'about.h.src':'Sources','about.p.src':'Each trick is linked to related sources: the KIDS Act proposal, Article 25 of the Digital Services Act, and Ofcom research categories. These links are indicative and still need to be verified against the original texts.',
+'about.h.open':'Open items',
+'about.open':['Formal WCAG check (keyboard, screen reader, contrast, zoom, touch targets).','Native-speaker review of Swedish; add the other official EU languages.','Age-appropriate wording for different age groups.','Parallel quiz versions and an independent evaluation.','Test with real teenagers and teachers.','Verify the source mapping for every trick.'],
+/* patterns */
+'p.streak.name':'Streak pressure','p.streak.why':'Losing something you have built makes you want to come back, even on days you do not enjoy it. Designers call this loss aversion.','p.streak.tip':'Ask: would I play today if there was no streak? Missing a day costs nothing real.',
+'p.virtual_currency.name':'Virtual currency','p.virtual_currency.why':'Gems hide the real price. 1,000 gems feels like a number in a game, not €10. Packs rarely match prices exactly, so you end up with leftovers and buy again.','p.virtual_currency.tip':'Convert it: how many euros is this? Would you pay that in cash?',
+'p.countdown.name':'Countdown timer','p.countdown.why':'A ticking clock makes you feel you must decide now. Often the timer restarts or the offer comes back.','p.countdown.tip':'A deal that is good today is usually good tomorrow. If it disappears you lose very little. Close it and decide later.',
+'p.loot_box.name':'Loot chest (random reward)','p.loot_box.why':'You pay for a chance, not for a thing. Wins are random and near-misses (“so close!”) make you try again. Random rewards are also used in gambling.','p.loot_box.tip':'Check the odds if they are shown. Treat each chest as money gone, not as an investment.',
+'p.social_proof.name':'Everyone else is doing it (FOMO)','p.social_proof.why':'Seeing others act makes it feel like the right choice, or like you are missing out. These messages are often automatic and may not be true.','p.social_proof.tip':'Ask who it is for. Would you still want it if nobody else did?',
+'p.scarcity.name':'Scarcity claim','p.scarcity.why':'“Only 2 left!” makes you hurry. If the number is not real or never changes, it is pressure, not information.','p.scarcity.tip':'Check another shop or come back later. Real stock rarely vanishes just when you hesitate.',
+'p.preselected.name':'Pre-ticked extra','p.preselected.why':'Most people do not change defaults. A box that is already ticked adds a cost unless you notice and untick it.','p.preselected.tip':'Read every ticked box before you pay. Untick what you did not choose.',
+'p.confirmshaming.name':'Guilt-trip button','p.confirmshaming.why':'The “no” option is worded to make you feel silly or selfish. It turns a free choice into an emotional one.','p.confirmshaming.tip':'Ignore the wording. “No thanks” is a normal answer.',
+'p.hidden_cost.name':'Hidden cost','p.hidden_cost.why':'“Free trial” is big. The price after the trial is tiny and grey. Many people forget to cancel and get charged.','p.hidden_cost.tip':'Find the price after the trial and the date you would be charged before you start. Set a reminder if you go ahead.',
+'p.hard_cancel.name':'Hard to cancel','p.hard_cancel.why':'Signing up took one tap. Leaving takes many screens, new offers and small buttons. Each step is a chance for you to give up.','p.hard_cancel.tip':'Keep going: the small grey link is usually the real cancel button. Take screenshots as proof.',
+'p.infinite_scroll.name':'Endless feed','p.infinite_scroll.why':'No bottom means no natural moment to stop. New posts load before you ask, so you keep going without deciding to.','p.infinite_scroll.tip':'Decide your stopping point first: a time or a number of posts. Use a timer outside the app.',
+'p.variable_reward.name':'Random reward','p.variable_reward.why':'Sometimes refreshing shows something exciting, sometimes nothing. Not knowing makes you check again and again.','p.variable_reward.tip':'Notice the urge to check. Turn off notifications that are not important.',
+'p.risky_default.name':'Risky default','p.risky_default.why':'Settings start open: anyone can see you or message you. Most people never change them.','p.risky_default.tip':'Check your privacy settings today. Choose the safest option, then open up only what you need.',
+/* says (the plain-language sentence) */
+'says.game.streak':'This reward is designed to encourage you to return tomorrow. If you skip a day, you lose your bonus.',
+'says.game.virtual_currency':'This currency costs €10, even though the game displays it as 1,000 gems.',
+'says.game.countdown':'This offer expires in 20 minutes. You don’t need to buy it.',
+'says.game.loot_box':'You pay 150 gems for a chance, not for a prize. Near-misses make you want to try again.',
+'says.game.social_proof':'This message is designed to make you feel you are missing out on what others are getting.',
+'says.shop.scarcity':'This number is meant to make you hurry. It might not be real.',
+'says.shop.social_proof':'Other people looking at this item makes it feel more popular. The number may be automatic.',
+'says.shop.preselected':'This extra was added for you. If you do not notice it, you pay €4.99 more.',
+'says.shop.confirmshaming':'This button is worded to make you feel bad for saying no. “No thanks” is always allowed.',
+'says.shop.hidden_cost':'The trial is free, but after 7 days it costs €14.99 every month. That price is the smallest text on the screen.',
+'says.shop.hard_cancel':'Joining took one tap. Leaving takes several screens, an offer and a tiny button.',
+'says.social.streak':'This streak is designed to make you open the app every day, so you do not let your friend down.',
+'says.social.infinite_scroll':'This feed has no end. New posts load before you ask, so there is no natural moment to stop.',
+'says.social.variable_reward':'Sometimes refreshing gives you something nice, sometimes nothing. Not knowing makes you check again.',
+'says.social.social_proof':'This message is designed to make you feel you are missing something happening right now.',
+'says.social.risky_default':'Your profile starts public and anyone can message you. Safer settings exist, but you have to find and change them.',
+/* decisions */
+'dec.game.1.q':'A pop-up says: “Starter pack −60%. Ends in 14:59!” A friend says it is a great deal. What do you do?',
+'dec.game.1.o1':'Buy it before it ends.','dec.game.1.f1':'That is the countdown working. Offers like this often come back, and a timer is pressure, not a reason.',
+'dec.game.1.o2':'Close it and decide tomorrow.','dec.game.1.f2':'If it is still a good deal tomorrow, you lose nothing by waiting. If it is gone, you lost very little.',
+'dec.game.1.o3':'Ask: how many euros is this, and would I pay that for a game item?','dec.game.1.f3':'Converting gems into euros makes the real price visible again.',
+'dec.game.2.q':'You have a 6-day streak. It is late and you are tired. The game says “Do not lose your streak!”',
+'dec.game.2.o1':'Play for two minutes just to keep it.','dec.game.2.f1':'That is how streaks work: they turn something you chose into something you owe. Notice the pull.',
+'dec.game.2.o2':'Skip it. A streak is worth nothing outside the game.','dec.game.2.f2':'You can start a new streak any time. Rest is worth more.',
+'dec.game.2.o3':'Spend gems to freeze the streak.','dec.game.2.f3':'The game sells you a fix for a worry it created.',
+'dec.shop.1.q':'At checkout a box is already ticked: “Add Care Plan (+€3.99)”. Your total is higher than you expected.',
+'dec.shop.1.o1':'Pay anyway. It is only a few euros.','dec.shop.1.f1':'Small extras add up, and you did not choose this one. Pre-ticked boxes rely on people not looking.',
+'dec.shop.1.o2':'Untick it and check the total.','dec.shop.1.f2':'Reading the boxes before you pay is the best habit here.',
+'dec.shop.1.o3':'Assume the shop would not add something I did not want.','dec.shop.1.f3':'That is exactly what the default counts on. Check for yourself.',
+'dec.shop.2.q':'You want to cancel a membership. The first screen offers 50% off.',
+'dec.shop.2.o1':'Take the 50% off.','dec.shop.2.f1':'Only if you really want to keep it. The offer is there to make you stop cancelling.',
+'dec.shop.2.o2':'Decline, keep going until it is cancelled, and screenshot the confirmation.','dec.shop.2.f2':'The confirmation is your proof if something goes wrong later.',
+'dec.shop.2.o3':'Give up. It is too much work.','dec.shop.2.f3':'That is what the extra steps are designed to cause. The small link is usually there.',
+'dec.social.1.q':'You have scrolled for 40 minutes without planning to. The feed keeps loading more.',
+'dec.social.1.o1':'Scroll a bit more. There might be something good.','dec.social.1.f1':'That thought is what an endless feed is built to create. There is always one more post.',
+'dec.social.1.o2':'Stop now and set a timer outside the app for next time.','dec.social.1.f2':'A stopping point you chose beats one the app never gives you.',
+'dec.social.1.o3':'Delete the app forever.','dec.social.1.f3':'That is your call. You can also keep it and change settings, like turning off notifications you do not need.',
+'dec.social.2.q':'Your profile is public and anyone can message you. That is how the app started out.',
+'dec.social.2.o1':'Leave it. If it is the default, it must be fine.','dec.social.2.f1':'Defaults are chosen by the company, not for you. Check them.',
+'dec.social.2.o2':'Change profile and messages to friends only.','dec.social.2.f2':'Start with the safest settings and open up only what you need.',
+'dec.social.2.o3':'Look through the settings together with someone I trust.','dec.social.2.f3':'Talking it through with someone you trust is a smart way to check.',
+/* quiz */
+'q1':'The button says “1,000 gems”. The price in euros is in tiny grey text.',
+'q2':'A store says “Only 2 left!” but the number is always 2, whenever you visit.',
+'q3':'To close a pop-up you must press “No thanks, I do not care about my health”.',
+'q4':'An app says “Play today or lose your 12-day bonus!”',
+'q5':'Signing up took one tap. To cancel, you click through four screens and the real button is tiny and grey.',
+'q6':'A new account starts with a public profile and messages from anyone turned on.',
+/* sim: game */
+'gems':'gems','game.streak.h':'Day {0} streak!','game.streak.p':'Come back tomorrow or lose your +{0}% bonus!','game.claim':'Claim daily reward',
+'game.offer.h':'MEGA OFFER −60%','game.offer.ends':'Ends in','game.buy':'Buy now',
+'game.a.item':'Dragon egg','game.b.item':'Space helmet','game.a.legend':'a Legendary Dragon','game.b.legend':'a Legendary Space Cat',
+'game.shop.h':'Gem shop','game.best':'BEST VALUE',
+'game.chest.h':'Mystery chest','game.chest.p':'Win {0}!','game.chest.btn':'Open ({0} gems)',
+'game.toast':'Mia just won {0}! Your turn?','game.toast.btn':'Open a chest',
+'game.fair.p':'Played today: {0} min','game.fair.btn':'Take a break',
+'game.msg.claim':'+50 gems! Day {0} streak. Tomorrow’s reward is even bigger!','game.msg.claimed':'Already claimed. Come back tomorrow!',
+'game.msg.need':'Not enough gems. You need {0} more. Visit the gem shop!','game.msg.got':'You got the {0}!',
+'game.msg.pack':'Pretend purchase done. +{0} gems. No real money used.','game.msg.poor':'Not enough gems for a chest ({0} needed).',
+'game.near':'So close! Try again?','game.win.legend':'You won {0}!','game.win.rare':'Rare: Silver shield','game.win.common':'Common: Wooden stick','game.break.msg':'Okay. The game will be here when you come back.',
+/* sim: shop */
+'shop.a.name':'Aero Run sneakers','shop.b.name':'Cloud hoodie','shop.a.addon':'Shoe Care Plan','shop.b.addon':'Hoodie Care Plan',
+'shop.scarcity':'Only {0} left in stock!','shop.watching':'{0} people are looking at this right now','shop.size':'Size','shop.addon':'Add {0} (+{1})',
+'shop.club.h':'Join Club: 7 days FREE!','shop.club.fine':'Then {0} per month until you cancel.','shop.club.btn':'Start free trial',
+'shop.total':'Total','shop.fair':'Includes VAT. Free returns for 30 days.','shop.buy':'Buy now',
+'shop.wait.h':'Wait! Save 15% today with Club.','shop.wait.yes':'Yes, I want to save!','shop.wait.no':'No thanks, I like paying full price',
+'shop.mem.h':'Your Club membership: active (trial)','shop.mem.cancel':'Cancel membership',
+'shop.c1.h':'Wait! Keep Club for 50% off for 3 months.','shop.c1.keep':'Keep my 50% deal','shop.c1.go':'No, continue cancelling',
+'shop.c2.h':'You will lose free shipping, early access and your points. Are you sure?','shop.c2.keep':'Never mind, keep my membership','shop.c2.go':'Yes, cancel',
+'shop.c3':'Membership cancelled (pretend).','shop.msg.joined':'Club trial started (pretend).','shop.msg.ordered':'Order placed (pretend). Nothing was charged.','shop.msg.kept':'Great, your membership stays active.',
+/* sim: social */
+'soc.live':'{0} friends are live right now. Don’t miss out!','soc.streak':'You and {0}: {1}-day streak. Don’t break it!','soc.snap':'Send a snap',
+'soc.refresh':'Refresh','soc.bell':'Notifications','soc.feed.label':'Feed','soc.pub':'Public profile (recommended)','soc.msg':'Anyone can message you (recommended)','soc.on':'On','soc.off':'Off',
+'soc.brk':'You have been scrolling for {0} minutes.','soc.rest':'Take a break','soc.keep':'Keep scrolling',
+'soc.m.new':'5 new likes and 2 new followers!','soc.m.none':'Nothing new yet. Try again?','soc.m.snap':'Sent! Streak: {0} days.','soc.m.rest':'Okay. See you later.',
+'soc.posts':['Look at this sunset!','Anyone else tired on Mondays?','New haircut. Thoughts?','This song is stuck in my head.','Best pizza ever, no discussion.','Finally finished level 40.','Who is going to the match on Friday?','My cat does not care about my homework.']
+},
+sv:{
+'app.title':'Hitta tricket','app.sub':'Ett experimentlabb om design som försöker styra dig.',
+'lang':'Språk','skip':'Hoppa till innehållet','back':'Alla scenarier',
+'home.intro':'Appar, spel och webbplatser är designade. En del av designen hjälper dig. En del är byggd för att få dig att lägga mer tid eller pengar än du tänkt dig. Testa tre låtsasversioner och lär dig sedan att se tricken.',
+'home.how':'Så funkar det','home.choose':'Välj ett scenario',
+'s1.h':'Testa','s1.p':'Använd ett låtsasspel, en låtsasbutik eller ett låtsasflöde. Inga instruktioner, inga tips.',
+'s2.h':'Se tricket','s2.p':'Slå på förklaringarna. Varje trick markeras och förklaras med enkla ord.',
+'s3.h':'Stå emot','s3.p':'Hitta tricken i en ny version och välj vad du skulle göra istället.',
+'tricks':'{0} trick att hitta',
+'scn.game.title':'Spel','scn.game.desc':'Ett mobilspel med dagliga belöningar, juveler och ett mysterieskrin.',
+'scn.shop.title':'Webbutik','scn.shop.desc':'Skor, en gratis provperiod och en kassa som vill ha mycket av dig.',
+'scn.social.title':'Sociala medier','scn.social.desc':'Ett flöde som aldrig tar slut, streaks med kompisar och notiser.',
+'kind.game':'spelet','kind.shop':'butiken','kind.social':'flödet',
+'quiz.row.h':'Testa vad du kan','quiz.row.h2':'Testa igen','quiz.row.p':'Sex snabba frågor. Gör testet före och efter för att se vad som ändrats. Inget sparas eller skickas.',
+'sandbox':'Simulering. Låtsaspengar. Inget här är på riktigt och inget sparas.','popup.tag':'Simulering','popup.close':'Stäng',
+'step0.h':'Testa',
+'step0.p.game':'Spela det här låtsasspelet som du brukar. Tryck på saker, strunta i saker, köp saker. Allt är på låtsas.',
+'step0.p.shop':'Handla i den här låtsasbutiken som du brukar. Titta runt, välj saker och försök gå till kassan. Inget är på riktigt.',
+'step0.p.social':'Scrolla i den här låtsasappen som du brukar. Scrolla, uppdatera, tryck. Inget är på riktigt.',
+'step0.p2':'Det finns inget mål och inget rätt sätt. Gå vidare när du är klar.',
+'step0.btn':'Jag är klar. Visa vad som hände',
+'step1.h':'Se tricket',
+'step1.p':'I {0} fanns {1} designtrick. Varje trick är numrerat på skärmen. Använd ”Visa på skärmen” på ett kort för att hitta det.',
+'show':'Visa på skärmen','why':'Därför funkar det:','tip':'Det kan du göra:','srcs':'Hör ihop med',
+'tried':'Du testade det här',
+'fair.h':'Inte ett trick: rättvis design',
+'fair.game':'Här får du riktig information och det är lätt att sluta. En påminnelse som hjälper dig att bestämma är inte manipulation.',
+'fair.shop':'Hela priset är tydligt, inkluderar moms och returvillkoren syns. Bra design gör kostnaden lätt att förstå.',
+'fair.social':'Två lika stora knappar: det är lika lätt att sluta som att fortsätta. Det hjälper dig att välja.',
+'step1.next':'Nästa: stå emot',
+'step2.h':'Stå emot',
+'step2.p1':'Det här är en ny version. Markera det du tror är trick. Vissa saker är rättvisa, så markera inte allt.',
+'marked':'Markerat: {0}','check':'Kontrollera mina svar',
+'res.h':'Ditt resultat','res.p':'Du hittade {0} av {1} trick.','res.wrong':'Felaktigt markerade: {0}.','res.none':'Inga fel.','res.missed':'Du missade:',
+'res.legend':'På skärmen: ✓ hittat, ! missat, ✗ inte ett trick.',
+'st.found':'Hittat','st.missed':'Missat','st.wrong':'Inte ett trick','flag':'Markera som trick:',
+'dec.h':'Vad skulle du göra?',
+'kind.good':'Bra val','kind.ok':'Förståeligt','kind.push':'Där funkade tricket',
+'done.h':'Scenariot är klart','done.p':'Prova ett annat scenario eller testa vad du kan.',
+'btn.another':'Välj ett annat scenario','btn.quiz':'Testa vad du kan',
+'quiz.h':'Testa vad du kan','quiz.p':'Sex korta frågor. Välj det trick som passar beskrivningen. Inget sparas eller skickas.',
+'quiz.submit':'Kontrollera svar','quiz.missing':'Svara på alla frågor.',
+'quiz.score':'Resultat: {0} av {1}','quiz.cmp':'Första gången: {0}. Senaste: {1}. (av {2})',
+'quiz.right':'Rätt.','quiz.wrong':'Inte riktigt. Rätt svar: {0}.','quiz.again':'Försök igen',
+'quiz.note':'Det här testet är en demo. Sex frågor kan inte mäta inlärning. En riktig utvärdering behöver fler frågor, olika versioner och tillräckligt många deltagare.',
+'foot':'Prototyp. Samlar inget, sparar inget.','about.link':'Om prototypen',
+'about.h':'Om prototypen',
+'about.p1':'Hitta tricket är ett proof of concept för ett upplevelsebaserat sätt att öva på att förstå manipulation. Det är gjort som komplement till ett policyyttrande om EU:s KIDS Act (COM(2026) 681 final). Det har inte visats fungera. Det visar hur idén kan se ut i praktiken.',
+'about.h.priv':'Integritet','about.p.priv':'Sidan har inga konton, samlar ingen data och sparar ingenting. Testresultat finns bara tills du stänger fliken.',
+'about.h.rule':'Designregel','about.p.rule':'Utanför simuleringarna försöker appen undvika tricken den lär ut: inga streaks, inga nedräkningar, inga belöningar för att komma tillbaka och inga dåligt-samvete-formuleringar. Den lilla grå texten och de skrikiga färgerna inuti simuleringarna är medvetna.',
+'about.h.lang':'Språk','about.p.lang':'Tillgängligt nu: engelska och svenska. Målet är att täcka alla officiella EU-språk. Översättningarna behöver granskas av personer med språket som modersmål.',
+'about.h.a11y':'Tillgänglighet','about.p.a11y':'Tillgänglighet är ett grundkrav. Prototypen använder semantisk HTML, tangentbordsstöd, synlig fokusmarkering och respekterar minskad rörelse. En formell kontroll mot WCAG (målnivå 2.2 AA) är inte gjord än och är planerad.',
+'about.h.src':'Källor','about.p.src':'Varje trick är kopplat till relaterade källor: förslaget till KIDS Act, artikel 25 i förordningen om digitala tjänster (DSA) och Ofcoms forskningskategorier. Kopplingarna är vägledande och behöver fortfarande kontrolleras mot originaltexterna.',
+'about.h.open':'Återstår',
+'about.open':['Formell WCAG-kontroll (tangentbord, skärmläsare, kontrast, zoom, tryckytor).','Granskning av svenskan av någon med svenska som modersmål. Lägg till övriga officiella EU-språk.','Åldersanpassade formuleringar för olika åldersgrupper.','Parallella testversioner och en oberoende utvärdering.','Test med riktiga tonåringar och lärare.','Kontrollera källkopplingen för varje trick.'],
+'p.streak.name':'Streak-press','p.streak.why':'Att förlora något du byggt upp gör att du vill komma tillbaka, även när du inte har lust. Designers kallar det förlustaversion.','p.streak.tip':'Fråga dig: skulle jag spela idag om det inte fanns någon streak? Att missa en dag kostar inget på riktigt.',
+'p.virtual_currency.name':'Virtuell valuta','p.virtual_currency.why':'Juveler döljer det riktiga priset. 1 000 juveler känns som ett tal i ett spel, inte som 10 €. Paketen går sällan jämnt upp, så du får över juveler och köper mer.','p.virtual_currency.tip':'Räkna om: hur många euro är det? Skulle du betala det med kontanter?',
+'p.countdown.name':'Nedräkning','p.countdown.why':'En tickande klocka får dig att känna att du måste välja nu. Ofta startar klockan om eller så kommer erbjudandet tillbaka.','p.countdown.tip':'Ett bra pris idag är oftast ett bra pris imorgon. Försvinner det förlorar du lite. Stäng ner det och bestäm senare.',
+'p.loot_box.name':'Lootbox (slumpmässig belöning)','p.loot_box.why':'Du betalar för en chans, inte för en sak. Vinsterna är slumpmässiga och nästan-vinster (”så nära!”) får dig att försöka igen. Slumpmässiga belöningar används också i spel om pengar.','p.loot_box.tip':'Titta på oddsen om de visas. Se varje skrin som pengar som är borta, inte som en investering.',
+'p.social_proof.name':'Alla andra gör det (FOMO)','p.social_proof.why':'När du ser andra göra något känns det som rätt val, eller som att du missar något. Meddelandena är ofta automatiska och behöver inte vara sanna.','p.social_proof.tip':'Fråga vem det är till för. Skulle du vilja ha det även om ingen annan ville?',
+'p.scarcity.name':'Brist-påstående','p.scarcity.why':'”Bara 2 kvar!” får dig att skynda. Om siffran inte är riktig eller aldrig ändras är det press, inte information.','p.scarcity.tip':'Titta i andra butiker eller kom tillbaka senare. Riktigt lager försvinner sällan just när du tvekar.',
+'p.preselected.name':'Förbockad extra','p.preselected.why':'De flesta ändrar inte standardvalen. En ruta som redan är ikryssad lägger till en kostnad om du inte märker den och bockar ur.','p.preselected.tip':'Läs varje ikryssad ruta innan du betalar. Bocka ur det du inte valt.',
+'p.confirmshaming.name':'Dåligt-samvete-knapp','p.confirmshaming.why':'Nej-knappen är formulerad så att du ska känna dig dum eller självisk. Ett fritt val görs om till ett känslomässigt.','p.confirmshaming.tip':'Strunta i formuleringen. ”Nej tack” är ett helt normalt svar.',
+'p.hidden_cost.name':'Dold kostnad','p.hidden_cost.why':'”Gratis provperiod” står med stora bokstäver. Priset efter provperioden står med liten, grå text. Många glömmer att säga upp och får betala.','p.hidden_cost.tip':'Hitta priset efter provperioden och datumet du debiteras innan du börjar. Sätt en påminnelse om du går vidare.',
+'p.hard_cancel.name':'Svårt att avsluta','p.hard_cancel.why':'Att gå med tog ett tryck. Att gå ur tar många sidor, nya erbjudanden och små knappar. Varje steg är en chans för dig att ge upp.','p.hard_cancel.tip':'Fortsätt: den lilla grå länken är oftast den riktiga avsluta-knappen. Ta skärmdumpar som bevis.',
+'p.infinite_scroll.name':'Oändligt flöde','p.infinite_scroll.why':'Utan botten finns inget naturligt ställe att sluta. Nya inlägg laddas innan du ber om dem, så du fortsätter utan att bestämma dig.','p.infinite_scroll.tip':'Bestäm stoppet i förväg: en tid eller ett antal inlägg. Använd en timer utanför appen.',
+'p.variable_reward.name':'Slumpmässig belöning','p.variable_reward.why':'Ibland ger uppdatering något kul, ibland ingenting. Att inte veta gör att du kollar igen och igen.','p.variable_reward.tip':'Lägg märke till suget att kolla. Stäng av notiser som inte är viktiga.',
+'p.risky_default.name':'Riskabel standardinställning','p.risky_default.why':'Inställningarna börjar öppna: vem som helst kan se dig eller skriva till dig. De flesta ändrar dem aldrig.','p.risky_default.tip':'Kolla dina sekretessinställningar idag. Välj det säkraste alternativet och öppna bara det du behöver.',
+'says.game.streak':'Den här belöningen är gjord för att få dig att komma tillbaka imorgon. Missar du en dag förlorar du din bonus.',
+'says.game.virtual_currency':'Den här valutan kostar 10 €, fast spelet visar det som 1 000 juveler.',
+'says.game.countdown':'Det här erbjudandet slutar om 20 minuter. Du behöver inte köpa det.',
+'says.game.loot_box':'Du betalar 150 juveler för en chans, inte för ett pris. Nästan-vinster får dig att vilja försöka igen.',
+'says.game.social_proof':'Det här meddelandet är gjort för att du ska känna att du missar det andra får.',
+'says.shop.scarcity':'Den här siffran är till för att få dig att skynda. Den behöver inte vara sann.',
+'says.shop.social_proof':'Att andra tittar på varan gör att den känns mer populär. Siffran kan vara automatisk.',
+'says.shop.preselected':'Den här extran lades till åt dig. Om du inte märker den betalar du 4,99 € mer.',
+'says.shop.confirmshaming':'Den här knappen är formulerad för att du ska skämmas över att säga nej. ”Nej tack” är alltid tillåtet.',
+'says.shop.hidden_cost':'Provperioden är gratis, men efter 7 dagar kostar den 14,99 € varje månad. Det priset står med minst text på skärmen.',
+'says.shop.hard_cancel':'Att gå med tog ett tryck. Att gå ur tar flera sidor, ett erbjudande och en pytteliten knapp.',
+'says.social.streak':'Den här streaken är gjord för att du ska öppna appen varje dag, så att du inte sviker din kompis.',
+'says.social.infinite_scroll':'Det här flödet har inget slut. Nya inlägg laddas innan du ber om dem, så det finns inget naturligt ställe att sluta.',
+'says.social.variable_reward':'Ibland ger uppdatering något fint, ibland ingenting. Att inte veta gör att du kollar igen.',
+'says.social.social_proof':'Det här meddelandet är gjort för att du ska känna att du missar något som händer just nu.',
+'says.social.risky_default':'Din profil börjar som offentlig och vem som helst kan skriva till dig. Säkrare inställningar finns, men du måste hitta och ändra dem.',
+'dec.game.1.q':'En pop-up säger: ”Startpaket −60 %. Slutar om 14:59!” En kompis säger att det är ett kanonpris. Vad gör du?',
+'dec.game.1.o1':'Köper det innan det tar slut.','dec.game.1.f1':'Där funkade nedräkningen. Såna erbjudanden kommer ofta tillbaka, och en klocka är press, inte ett skäl.',
+'dec.game.1.o2':'Stänger ner det och bestämmer imorgon.','dec.game.1.f2':'Om det fortfarande är ett bra pris imorgon förlorar du inget på att vänta. Är det borta har du förlorat väldigt lite.',
+'dec.game.1.o3':'Frågar mig: hur många euro är det här, och skulle jag betala det för en spelgrej?','dec.game.1.f3':'När du räknar om juveler till euro syns det riktiga priset igen.',
+'dec.game.2.q':'Du har spelat sex dagar i rad. Det är sent och du är trött. Spelet säger ”Förlora inte din serie!”',
+'dec.game.2.o1':'Spelar i två minuter bara för att behålla den.','dec.game.2.f1':'Så funkar streaks: de förvandlar något du valde till något du är skyldig. Lägg märke till dragningen.',
+'dec.game.2.o2':'Hoppar över det. En streak är värdelös utanför spelet.','dec.game.2.f2':'Du kan starta en ny serie när som helst. Vila är värt mer.',
+'dec.game.2.o3':'Använder juveler för att frysa serien.','dec.game.2.f3':'Spelet säljer dig en lösning på en oro som det själv skapat.',
+'dec.shop.1.q':'I kassan är en ruta redan ikryssad: ”Lägg till Skyddsplan (+3,99 €)”. Totalen är högre än du väntat dig.',
+'dec.shop.1.o1':'Betalar ändå. Det är bara några euro.','dec.shop.1.f1':'Små extrakostnader blir många, och den här valde du inte själv. Förbockade rutor räknar med att folk inte tittar.',
+'dec.shop.1.o2':'Bockar ur den och kollar totalen.','dec.shop.1.f2':'Att läsa rutorna innan du betalar är den bästa vanan här.',
+'dec.shop.1.o3':'Utgår från att butiken inte lägger till något jag inte vill ha.','dec.shop.1.f3':'Det är precis det som standardvalet räknar med. Kolla själv.',
+'dec.shop.2.q':'Du vill avsluta ett medlemskap. Första sidan erbjuder 50 % rabatt.',
+'dec.shop.2.o1':'Tar rabatten.','dec.shop.2.f1':'Bara om du verkligen vill behålla det. Erbjudandet finns där för att få dig att sluta avsluta.',
+'dec.shop.2.o2':'Tackar nej, fortsätter tills det är avslutat och tar en skärmdump av bekräftelsen.','dec.shop.2.f2':'Bekräftelsen är ditt bevis om något går fel senare.',
+'dec.shop.2.o3':'Ger upp. Det är för mycket jobb.','dec.shop.2.f3':'Det är precis vad de extra stegen är till för. Den lilla länken brukar gå att hitta.',
+'dec.social.1.q':'Du har scrollat i 40 minuter utan att ha planerat det. Flödet fortsätter ladda mer.',
+'dec.social.1.o1':'Scrollar lite till. Det kanske kommer något bra.','dec.social.1.f1':'Den tanken är vad ett oändligt flöde är byggt för att skapa. Det finns alltid ett inlägg till.',
+'dec.social.1.o2':'Slutar nu och sätter en timer utanför appen till nästa gång.','dec.social.1.f2':'Ett stopp som du själv valt är bättre än ett som appen aldrig ger dig.',
+'dec.social.1.o3':'Raderar appen för alltid.','dec.social.1.f3':'Det är ditt val. Du kan också behålla den och ändra inställningar, till exempel stänga av notiser du inte behöver.',
+'dec.social.2.q':'Din profil är offentlig och vem som helst kan skriva till dig. Så såg appen ut från början.',
+'dec.social.2.o1':'Låter det vara. Är det standard så är det väl okej.','dec.social.2.f1':'Standardvalen väljer företaget, inte du. Kolla dem.',
+'dec.social.2.o2':'Ändrar profil och meddelanden till bara vänner.','dec.social.2.f2':'Börja med de säkraste inställningarna och öppna bara det du behöver.',
+'dec.social.2.o3':'Går igenom inställningarna tillsammans med någon jag litar på.','dec.social.2.f3':'Att prata igenom det med någon du litar på är ett smart sätt att kolla.',
+'q1':'Knappen säger ”1 000 juveler”. Priset i euro står med liten grå text.',
+'q2':'En butik säger ”Bara 2 kvar!” men siffran är alltid 2, oavsett när du besöker den.',
+'q3':'För att stänga en pop-up måste du trycka på ”Nej tack, jag bryr mig inte om min hälsa”.',
+'q4':'En app säger ”Spela idag annars förlorar du din bonus på 12 dagar!”',
+'q5':'Att gå med tog ett tryck. För att avsluta klickar du igenom fyra sidor och den riktiga knappen är liten och grå.',
+'q6':'Ett nytt konto startar med offentlig profil och meddelanden från vem som helst påslagna.',
+'gems':'juveler','game.streak.h':'Dag {0} i rad!','game.streak.p':'Kom tillbaka imorgon, annars försvinner din bonus på +{0} %!','game.claim':'Hämta dagens belöning',
+'game.offer.h':'MEGAERBJUDANDE −60 %','game.offer.ends':'Slutar om','game.buy':'Köp nu',
+'game.a.item':'Drakägg','game.b.item':'Rymdhjälm','game.a.legend':'ett legendariskt drak','game.b.legend':'en legendarisk rymdkatt',
+'game.shop.h':'Juvelshop','game.best':'BÄST VÄRDE',
+'game.chest.h':'Mysterieskrin','game.chest.p':'Chans att vinna {0}!','game.chest.btn':'Öppna ({0} juveler)',
+'game.toast':'Mia vann precis {0}! Din tur?','game.toast.btn':'Öppna ett skrin',
+'game.fair.p':'Spelat idag: {0} min','game.fair.btn':'Ta en paus',
+'game.msg.claim':'+50 juveler! Dag {0} i rad. Imorgon är belöningen ännu större!','game.msg.claimed':'Redan hämtad. Kom tillbaka imorgon!',
+'game.msg.need':'Du har inte tillräckligt med juveler. Du behöver {0} till. Besök juvelshopen!','game.msg.got':'Du fick {0}!',
+'game.msg.pack':'Låtsasköp klart. +{0} juveler. Inga riktiga pengar användes.','game.msg.poor':'Inte tillräckligt med juveler för ett skrin (du behöver {0}).',
+'game.near':'Så nära! Försök igen?','game.win.legend':'Du vann {0}!','game.win.rare':'Sällsynt: Silversköld','game.win.common':'Vanlig: Träpinne','game.break.msg':'Okej. Spelet finns kvar när du kommer tillbaka.',
+'shop.a.name':'Aero Run-skor','shop.b.name':'Cloud-hoodie','shop.a.addon':'Skoskyddsplan','shop.b.addon':'Hoodieskyddsplan',
+'shop.scarcity':'Bara {0} kvar i lager!','shop.watching':'{0} personer tittar på den här just nu','shop.size':'Storlek','shop.addon':'Lägg till {0} (+{1})',
+'shop.club.h':'Bli med i Club: 7 dagar GRATIS!','shop.club.fine':'Därefter {0} per månad tills du säger upp.','shop.club.btn':'Starta gratis provperiod',
+'shop.total':'Totalt','shop.fair':'Inklusive moms. Fri retur i 30 dagar.','shop.buy':'Köp nu',
+'shop.wait.h':'Vänta! Spara 15 % idag med Club.','shop.wait.yes':'Ja, jag vill spara!','shop.wait.no':'Nej tack, jag gillar att betala fullt pris',
+'shop.mem.h':'Ditt Club-medlemskap: aktivt (provperiod)','shop.mem.cancel':'Avsluta medlemskap',
+'shop.c1.h':'Vänta! Behåll Club med 50 % rabatt i 3 månader.','shop.c1.keep':'Behåll min 50 %-deal','shop.c1.go':'Nej, fortsätt avsluta',
+'shop.c2.h':'Du förlorar fri frakt, förhandstillgång och dina poäng. Är du säker?','shop.c2.keep':'Strunta i det, behåll mitt medlemskap','shop.c2.go':'Ja, avsluta',
+'shop.c3':'Medlemskapet är avslutat (på låtsas).','shop.msg.joined':'Club-provperioden har startat (på låtsas).','shop.msg.ordered':'Beställningen är lagd (på låtsas). Inget drogs.','shop.msg.kept':'Bra, ditt medlemskap är kvar.',
+'soc.live':'{0} vänner är live just nu. Missa inte det!','soc.streak':'Du och {0}: {1} dagar i rad. Bryt det inte!','soc.snap':'Skicka en snap',
+'soc.refresh':'Uppdatera','soc.bell':'Notiser','soc.feed.label':'Flöde','soc.pub':'Offentlig profil (rekommenderas)','soc.msg':'Vem som helst kan skriva till dig (rekommenderas)','soc.on':'På','soc.off':'Av',
+'soc.brk':'Du har scrollat i {0} minuter.','soc.rest':'Ta en paus','soc.keep':'Fortsätt scrolla',
+'soc.m.new':'5 nya gillningar och 2 nya följare!','soc.m.none':'Inget nytt än. Försök igen?','soc.m.snap':'Skickat! Streak: {0} dagar.','soc.m.rest':'Okej. Vi ses senare.',
+'soc.posts':['Titta på solnedgången!','Är det fler som är trötta på måndagar?','Ny frisyr. Vad tycker ni?','Den här låten sitter fast i huvudet.','Bästa pizzan någonsin, ingen diskussion.','Äntligen klarade jag nivå 40.','Vem ska på matchen på fredag?','Min katt bryr sig inte om mina läxor.']
+}};
+
+const tl=k=>{const v=I18N[lang]&&I18N[lang][k]; return v!==undefined?v:I18N.en[k];};
+const t=(k,...a)=>{let s=tl(k); if(s===undefined) return k; if(typeof s!=='string') return s; a.forEach((v,i)=>{s=s.split('{'+i+'}').join(v)}); return s;};
+const loc=()=>lang==='sv'?'sv-SE':'en-GB';
+const fmt=n=>Number(n).toLocaleString(loc());
+const eur=n=>new Intl.NumberFormat(lang==='sv'?'sv-SE':'en-IE',{style:'currency',currency:'EUR'}).format(n);
+const mmss=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ================= pattern library (data-driven) =================
+   Texts live in I18N under p.<id>.name|why|tip. Sources are indicative, to be verified. */
+const PATTERNS={
+  streak:{src:['KIDS Act Recital 37, Art. 15','Ofcom 2026: reward-based']},
+  virtual_currency:{src:['KIDS Act Recital 40, Art. 15','Ofcom 2025: dissociative']},
+  countdown:{src:['DSA Art. 25','Ofcom 2025: impulsive']},
+  loot_box:{src:['Ofcom 2025: risk-based','Arnedo-Moreno et al. 2026 (correlational)']},
+  social_proof:{src:['Ofcom 2025: social-influence','Ofcom 2026: social-influence']},
+  scarcity:{src:['DSA Art. 25','Ofcom 2025: misleading']},
+  preselected:{src:['DSA Art. 25, Recital 67 (defaults)']},
+  confirmshaming:{src:['DSA Art. 25 (non-neutral choices)']},
+  hidden_cost:{src:['DSA Art. 25','Ofcom 2025: misleading']},
+  hard_cancel:{src:['DSA Recital 67 (cancelling harder than signing up)']},
+  infinite_scroll:{src:['KIDS Act Art. 8','Ofcom 2026: dissociative']},
+  variable_reward:{src:['Ofcom 2026: reward-based']},
+  risky_default:{src:['KIDS Act Art. 8 (high privacy by default)']}
+};
+const SCEN={
+  game:{patterns:['streak','virtual_currency','countdown','loot_box','social_proof']},
+  shop:{patterns:['scarcity','social_proof','preselected','confirmshaming','hidden_cost','hard_cancel']},
+  social:{patterns:['streak','infinite_scroll','variable_reward','social_proof','risky_default']}
+};
+const DEC={game:[['push','good','good'],['ok','good','push']],shop:[['push','good','push'],['ok','good','push']],social:[['push','good','ok'],['push','good','good']]};
+const QUIZ=[
+  {a:'virtual_currency',d:['countdown','preselected']},
+  {a:'scarcity',d:['social_proof','hidden_cost']},
+  {a:'confirmshaming',d:['hard_cancel','streak']},
+  {a:'streak',d:['loot_box','countdown']},
+  {a:'hard_cancel',d:['hidden_cost','preselected']},
+  {a:'risky_default',d:['infinite_scroll','variable_reward']}
+];
+
+/* ================= simulations ================= */
+const GV={a:{name:'Dragon Dash',gems:120,day:4,bonus:20,pack:[500,1000,2500],item:840,chest:150,cd:'19:59',secs:1199},
+          b:{name:'Cosmo Cats',gems:90,day:6,bonus:25,pack:[400,800,2000],item:650,chest:120,cd:'14:59',secs:899}};
+const GEM='<svg class="gem" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 7-8 13L4 9z"/></svg>';
+const PET='<svg viewBox="0 0 120 90"><path d="M38 28l8 14M82 28l-8 14" stroke="#FFD60A" stroke-width="6" stroke-linecap="round"/><ellipse cx="60" cy="54" rx="40" ry="31" fill="#7CFFB2"/><circle cx="46" cy="48" r="8" fill="#fff"/><circle cx="74" cy="48" r="8" fill="#fff"/><circle cx="48" cy="49" r="3.5" fill="#222"/><circle cx="76" cy="49" r="3.5" fill="#222"/><path d="M48 66q12 10 24 0" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/></svg>';
+
+function toastHTML(v){return `<div class="g-toast" data-p="social_proof"><p>${esc(t('game.toast',t(`game.${v}.legend`)))}</p><button type="button" class="g-btn alt" data-act="chest">${t('game.toast.btn')}</button></div>`;}
+
+function simGame(v,st){
+  const g=GV[v];
+  return `<div class="sim sim-game">
+  <div class="g-top"><span>${g.name}</span><span class="g-gems">${GEM}<b id="gemN">${fmt(g.gems)}</b><span class="sr">${t('gems')}</span></span></div>
+  <div class="g-pet" aria-hidden="true">${PET}</div>
+  <div class="g-card g-streak" data-p="streak"><span class="g-flame" aria-hidden="true">🔥</span><div><b>${t('game.streak.h',g.day)}</b><p>${t('game.streak.p',g.bonus)}</p></div><button type="button" class="g-btn" data-act="claim">${t('game.claim')}</button></div>
+  <div class="g-card g-offer" data-p="countdown"><span class="g-ribbon">${t('game.offer.h')}</span><p><b>${t(`game.${v}.item`)}</b> <s>${fmt(Math.round(g.item/0.4))}</s> ${GEM}<b>${fmt(g.item)}</b></p><p class="g-cd">${t('game.offer.ends')} <b id="cd" aria-hidden="true">${g.cd}</b></p><button type="button" class="g-btn" data-act="offer">${t('game.buy')}</button></div>
+  <div class="g-card g-shop" data-p="virtual_currency"><b>${t('game.shop.h')}</b><div class="g-packs">${g.pack.map((n,i)=>`<button type="button" class="g-pack${i===1?' best':''}" data-act="pack" data-n="${n}">${GEM}<b>${fmt(n)}</b><small>${eur(n/100)}</small></button>`).join('')}</div></div>
+  <div class="g-card g-chest" data-p="loot_box"><b>${t('game.chest.h')}</b><p>${t('game.chest.p',t(`game.${v}.legend`))}</p><div class="g-reels" id="reels" aria-live="polite">${st?'★ ★ •':''}</div><button type="button" class="g-btn" data-act="chest">${t('game.chest.btn',g.chest)}</button></div>
+  <div id="toastSlot" role="status">${st?toastHTML(v):''}</div>
+  <div class="g-fair" data-fair="1"><span>${t('game.fair.p',42)}</span><button type="button" class="g-btn alt" data-act="break">${t('game.fair.btn')}</button></div>
+  </div>`;
+}
+
+const SV={a:{price:79,left:2,watch:14,addon:4.99,after:14.99,color:'#FF5A1F'},b:{price:59,left:3,watch:23,addon:3.99,after:12.99,color:'#2A7DE1'}};
+function memberStep(n){
+  if(n===0) return `<b>${t('shop.mem.h')}</b><button type="button" class="tiny" data-act="c1">${t('shop.mem.cancel')}</button>`;
+  if(n===1) return `<b id="mstep" tabindex="-1">${t('shop.c1.h')}</b><button type="button" class="s-btn" data-act="ckeep">${t('shop.c1.keep')}</button><button type="button" class="tiny" data-act="c2">${t('shop.c1.go')}</button>`;
+  if(n===2) return `<b id="mstep" tabindex="-1">${t('shop.c2.h')}</b><button type="button" class="s-btn" data-act="ckeep">${t('shop.c2.keep')}</button><button type="button" class="tiny" data-act="c3">${t('shop.c2.go')}</button>`;
+  return `<b id="mstep" tabindex="-1">${t('shop.c3')}</b>`;
+}
+function simShop(v,st){
+  const s=SV[v];
+  return `<div class="sim sim-shop">
+  <div class="s-bar">STRIDE&amp;CO</div>
+  <div class="s-photo" aria-hidden="true"><svg viewBox="0 0 160 90"><rect width="160" height="90" fill="#F1F1F1"/><path d="M14 66Q22 36 54 42L74 26Q94 42 124 52Q150 56 150 70L14 72Z" fill="${s.color}"/><rect x="14" y="70" width="136" height="8" rx="4" fill="#222"/></svg></div>
+  <h3>${t(`shop.${v}.name`)}</h3>
+  <div class="s-price">${eur(s.price)}</div>
+  <p class="s-scar" data-p="scarcity">${t('shop.scarcity',s.left)}</p>
+  <p class="s-watch" data-p="social_proof">${t('shop.watching',s.watch)}</p>
+  <label>${t('shop.size')} <select><option>S</option><option selected>M</option><option>L</option></select></label>
+  <label class="s-addon" data-p="preselected"><input type="checkbox" id="addon" checked> <span>${t('shop.addon',t(`shop.${v}.addon`),eur(s.addon))}</span></label>
+  <div class="s-club" data-p="hidden_cost"><b>${t('shop.club.h')}</b><p class="tiny">${t('shop.club.fine',eur(s.after))}</p><button type="button" class="s-btn dark" data-act="join">${t('shop.club.btn')}</button></div>
+  <div class="s-total" data-fair="1"><span>${t('shop.total')}: <b id="total">${eur(s.price+s.addon)}</b></span><span>${t('shop.fair')}</span></div>
+  <button type="button" class="s-btn" data-act="buy">${t('shop.buy')}</button>
+  <div class="s-wait" data-p="confirmshaming" id="wait" tabindex="-1" ${st?'':'hidden'}><b>${t('shop.wait.h')}</b><button type="button" class="s-btn" data-act="yes">${t('shop.wait.yes')}</button><button type="button" class="s-no" data-act="no">${t('shop.wait.no')}</button></div>
+  <div class="s-member" data-p="hard_cancel" id="member" ${st?'':'hidden'}><div id="mBody">${memberStep(0)}</div></div>
+  </div>`;
+}
+
+const NAMES=['Ines','Omar','Lea','Noah','Sofia','Elias','Maja','Adam'];
+function postHTML(i){
+  const posts=tl('soc.posts'); const h=(i*67)%360;
+  return `<article class="o-post"><span class="av" style="background:hsl(${h} 70% 55%)" aria-hidden="true"></span><div><b>${NAMES[i%NAMES.length]}</b><p>${esc(posts[(i*3+1)%posts.length])}</p><small>♥ ${(i*7+12)%90+3}</small></div></article>`;
+}
+const SC={a:{name:'Loop',friend:'Alex',streak:23,live:12,mins:25},b:{name:'Orbit',friend:'Sam',streak:41,live:9,mins:30}};
+function simSocial(v,st){
+  const s=SC[v]; let posts=''; for(let i=0;i<5;i++) posts+=postHTML(i);
+  const sw=(id,label)=>`<div class="o-row"><span id="${id}l">${label}</span><button type="button" class="o-sw" role="switch" aria-checked="true" aria-labelledby="${id}l" data-act="sw">${t('soc.on')}</button></div>`;
+  return `<div class="sim sim-soc">
+  <div class="o-top"><b>${s.name}</b><div class="o-actions" data-p="variable_reward"><button type="button" class="o-icon" data-act="refresh" aria-label="${esc(t('soc.refresh'))}">⟳</button><span class="o-bell" role="img" aria-label="${esc(t('soc.bell'))}">🔔<i id="badge">3</i></span></div></div>
+  <div class="o-live" data-p="social_proof"><span class="avs" aria-hidden="true"><span style="background:#FF3E9A"></span><span style="background:#4DE3FF"></span><span style="background:#FFD60A"></span></span><span>${t('soc.live',s.live)}</span></div>
+  <div class="o-streak" data-p="streak"><span id="streakT">${t('soc.streak',s.friend,s.streak)}</span><button type="button" class="o-btn" data-act="snap">${t('soc.snap')}</button></div>
+  <div class="o-feed" id="feed" data-p="infinite_scroll" data-lbl="${esc(t('soc.feed.label'))}" tabindex="0" role="region" aria-label="${esc(t('soc.feed.label'))}">${posts}</div>
+  <div class="o-break" data-fair="1" id="brk" ${st?'':'hidden'}><span>${t('soc.brk',s.mins)}</span><div class="row2"><button type="button" class="o-btn" data-act="rest">${t('soc.rest')}</button><button type="button" class="o-btn" data-act="keep">${t('soc.keep')}</button></div></div>
+  <div class="o-set" data-p="risky_default">${sw('sw1',t('soc.pub'))}${sw('sw2',t('soc.msg'))}</div>
+  </div>`;
+}
+const SIM={game:simGame,shop:simShop,social:simSocial};
+
+/* ================= state ================= */
+const S={view:'home',scn:null,step:0,max:0,quiz:{pre:null,last:null,show:false,ans:{},err:false}};
+let ctx=null, timers=[], simAPI=null, ro=null;
+const newCtx=()=>({trig:new Set(),flags:new Set(),checked:false,dec:{},hl:null});
+const clearTimers=()=>{timers.forEach(i=>{clearInterval(i);clearTimeout(i)});timers=[];};
+const popup=m=>{const c=$('#popup'); if(!c) return; c.innerHTML=`<div class="pop pop-${S.scn||'game'}"><span class="ptag">${t('popup.tag')}</span><p>${esc(m)}</p><button type="button" class="pclose" data-popclose aria-label="${esc(t('popup.close'))}">×</button></div>`;};
+const clearPopup=()=>{const c=$('#popup'); if(c) c.innerHTML='';};
+const say=(id,m)=>{ if(id==='reels'){const e=$('#reels'); if(e) e.textContent=m;} else if(id!=='cnt') popup(m); else {const e=$('#cnt'); if(e) e.textContent=m;} };
+
+/* ================= render ================= */
+function setChrome(){
+  $('#top').innerHTML=`<button type="button" class="brand" data-go="home">${t('app.title')}</button><div class="tools"><label for="langsel">${t('lang')}</label><select id="langsel">${LANGS.map(l=>`<option value="${l.code}" lang="${l.code}"${l.code===lang?' selected':''}>${l.name}</option>`).join('')}</select></div>`;
+  $('#foot').innerHTML=`<p>${t('foot')}</p><button type="button" class="linkbtn" data-go="about">${t('about.link')}</button>`;
+  $('.skip').textContent=t('skip');
+  document.title=t('app.title');
+}
+function render(focusSel){
+  clearTimers(); simAPI=null; if(ro){ro.disconnect();ro=null;}
+  clearPopup();
+  document.documentElement.lang=lang;
+  setChrome();
+  const m=$('#main');
+  ({home:viewHome,scn:viewScn,quiz:viewQuiz,about:viewAbout})[S.view](m);
+  if(focusSel===undefined) focusSel='#h1';
+  if(focusSel){const f=$(focusSel); if(f){f.focus({preventScroll:true}); f.scrollIntoView({block:'start'});}}
+}
+function go(view,scn){
+  S.view=view;
+  if(view==='scn'){S.scn=scn;S.step=0;S.max=0;ctx=newCtx();}
+  if(view==='quiz'){S.quiz.show=false;S.quiz.ans={};S.quiz.err=false;}
+  render(); if(view!=='scn') window.scrollTo(0,0);
+}
+
+function viewHome(m){
+  const qh=S.quiz.pre!==null?'quiz.row.h2':'quiz.row.h';
+  m.innerHTML=`<section><h1 id="h1" tabindex="-1">${t('app.title')}</h1><p class="lead">${t('home.intro')}</p></section>
+  <section aria-labelledby="how"><h2 class="h2" id="how">${t('home.how')}</h2><ol class="how">${[1,2,3].map(i=>`<li><b>${t('s'+i+'.h')}</b><span>${t('s'+i+'.p')}</span></li>`).join('')}</ol></section>
+  <section aria-labelledby="ch"><h2 class="h2" id="ch">${t('home.choose')}</h2><ul class="rows">
+  ${Object.keys(SCEN).map(k=>`<li><button type="button" class="row" data-scn="${k}"><span class="swatch sw-${k}" aria-hidden="true"></span><span class="rtxt"><b>${t('scn.'+k+'.title')}</b><span>${t('scn.'+k+'.desc')}</span><small>${t('tricks',SCEN[k].patterns.length)}</small></span></button></li>`).join('')}
+  <li><button type="button" class="row" data-go="quiz"><span class="swatch sw-quiz" aria-hidden="true"></span><span class="rtxt"><b>${t(qh)}</b><span>${t('quiz.row.p')}</span></span></button></li></ul></section>`;
+}
+
+function viewScn(m){
+  const sc=S.scn, step=S.step, v=step===2?'b':'a', st=step>0;
+  m.innerHTML=`<button type="button" class="back" data-go="home">← ${t('back')}</button>
+  <h1 id="h1" tabindex="-1">${t('scn.'+sc+'.title')}</h1>
+  <ol class="stepper">${[0,1,2].map(i=>`<li><button type="button" data-step="${i}"${i>S.max?' disabled':''}${i===step?' aria-current="step"':''}>${t('s'+(i+1)+'.h')}</button></li>`).join('')}</ol>
+  <div class="split"><div class="phonewrap"><div class="phone"><div class="simbar">${t('sandbox')}</div><div class="scroll" tabindex="0" role="region" aria-label="${esc(t('popup.tag'))}"><div class="stage-wrap" id="wrap">${SIM[sc](v,st)}<div class="overlay" id="ov"></div></div></div></div><div id="popup" class="popup" role="status" aria-live="polite"></div></div>
+  <section class="panel" aria-labelledby="ph">${[panel0,panel1,panel2][step](sc)}</section></div>`;
+  if(st){const sim=$('.sim',m); sim.inert=true; ro=new ResizeObserver(()=>layout()); ro.observe($('#wrap')); layout(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(layout);}
+  else {({game:initGame,shop:initShop,social:initSocial})[sc]();}
+  if(step===2) refreshDecisions();
+}
+const panel0=sc=>`<h2 id="ph" tabindex="-1">${t('step0.h')}</h2><p>${t('step0.p.'+sc)}</p><p class="hint">${t('step0.p2')}</p><div class="btns"><button type="button" class="btn primary" data-step="1">${t('step0.btn')}</button></div>`;
+function panel1(sc){
+  const def=SCEN[sc];
+  const cards=def.patterns.map((id,i)=>`<article class="card" aria-labelledby="c-${id}"><header><span class="num" aria-hidden="true">${i+1}</span><h3 id="c-${id}">${t('p.'+id+'.name')}</h3>${ctx.trig.has(id)?`<span class="chip">${t('tried')}</span>`:''}</header>
+    <p class="say">“${t('says.'+sc+'.'+id)}”</p>
+    <p><b>${t('why')}</b> ${t('p.'+id+'.why')}</p><p><b>${t('tip')}</b> ${t('p.'+id+'.tip')}</p>
+    <ul class="src" aria-label="${esc(t('srcs'))}">${PATTERNS[id].src.map(s=>`<li>${esc(s)}</li>`).join('')}</ul>
+    <button type="button" class="btn" data-hl="${id}" aria-pressed="${ctx.hl===id}">${t('show')}</button></article>`).join('');
+  const fair=`<article class="card fairc" aria-labelledby="c-fair"><header><span class="num" aria-hidden="true">✓</span><h3 id="c-fair">${t('fair.h')}</h3></header><p>${t('fair.'+sc)}</p><button type="button" class="btn" data-hl="fair" aria-pressed="${ctx.hl==='fair'}">${t('show')}</button></article>`;
+  return `<h2 id="ph" tabindex="-1">${t('step1.h')}</h2><p>${t('step1.p',t('kind.'+sc),def.patterns.length)}</p>${cards}${fair}<div class="btns"><button type="button" class="btn primary" data-step="2">${t('step1.next')}</button></div>`;
+}
+function panel2(sc){
+  const def=SCEN[sc], total=def.patterns.length;
+  let h=`<h2 id="ph" tabindex="-1">${t('step2.h')}</h2><p>${t('step2.p1')}</p>`;
+  if(!ctx.checked){
+    h+=`<p class="count" id="cnt" role="status">${t('marked',ctx.flags.size)}</p><div class="btns"><button type="button" class="btn primary" data-act2="check">${t('check')}</button></div>`;
+  } else {
+    const found=def.patterns.filter(k=>ctx.flags.has(k)).length, wrong=ctx.flags.has('fair')?1:0;
+    const missed=def.patterns.filter(k=>!ctx.flags.has(k));
+    h+=`<div class="result" id="res" tabindex="-1"><h3>${t('res.h')}</h3><p>${t('res.p',found,total)} ${wrong?t('res.wrong',wrong):t('res.none')}</p><p class="legend">${t('res.legend')}</p>
+    ${missed.length?`<p><b>${t('res.missed')}</b></p><ul>${missed.map(k=>`<li><b>${t('p.'+k+'.name')}.</b> ${t('p.'+k+'.tip')}</li>`).join('')}</ul>`:''}</div>
+    <h3>${t('dec.h')}</h3>
+    ${DEC[sc].map((d,i)=>`<fieldset class="dec"><legend>${t(`dec.${sc}.${i+1}.q`)}</legend>${d.map((k,j)=>`<button type="button" class="opt" aria-pressed="false" data-dec="${i}:${j}">${t(`dec.${sc}.${i+1}.o${j+1}`)}</button>`).join('')}<p class="fb" id="fb${i}" role="status"></p></fieldset>`).join('')}
+    <div id="doneslot"></div>`;
+  }
+  return h;
+}
+function refreshDecisions(){
+  if(!ctx.checked) return; const sc=S.scn;
+  DEC[sc].forEach((d,i)=>{
+    $$(`[data-dec^="${i}:"]`).forEach(b=>{const j=+b.dataset.dec.split(':')[1]; const on=ctx.dec[i]===j; b.classList.toggle('sel',on); b.setAttribute('aria-pressed',on);});
+    const fb=$('#fb'+i); if(fb){ const j=ctx.dec[i]; fb.innerHTML=j===undefined?'':`<b class="k-${d[j]}">${t('kind.'+d[j])}.</b> ${t(`dec.${sc}.${i+1}.f${j+1}`)}`; }
+  });
+  const slot=$('#doneslot');
+  if(slot) slot.innerHTML=(Object.keys(ctx.dec).length===DEC[sc].length)?`<div class="done"><h3>${t('done.h')}</h3><p>${t('done.p')}</p><div class="btns"><button type="button" class="btn primary" data-go="home">${t('btn.another')}</button><button type="button" class="btn" data-go="quiz">${t('btn.quiz')}</button></div></div>`:'';
+}
+
+/* ---- overlay: markers (step 1) and flag buttons (step 2) ---- */
+function layout(){
+  const wrap=$('#wrap'), ov=$('#ov'); if(!wrap||!ov||!ctx||S.step===0) return;
+  const fk=document.activeElement&&ov.contains(document.activeElement)?document.activeElement.dataset.k:null;
+  const wr=wrap.getBoundingClientRect(), def=SCEN[S.scn]; let h='';
+  $$('[data-p],[data-fair]',$('.sim',wrap)).filter(e=>!e.hidden).forEach(el=>{
+    const key=el.dataset.p||'fair', r=el.getBoundingClientRect();
+    const pos=`left:${r.left-wr.left}px;top:${r.top-wr.top}px;width:${r.width}px;height:${r.height}px`;
+    if(S.step===1){
+      h+=`<div class="mark${key==='fair'?' fair':''}${ctx.hl===key?' on':''}" data-k="${key}" style="${pos}"><span class="badge">${key==='fair'?'✓':def.patterns.indexOf(key)+1}</span></div>`;
+    } else {
+      const on=ctx.flags.has(key); let cls='hit',badge=on?'⚑':'',state='';
+      if(ctx.checked){
+        const trick=key!=='fair';
+        if(trick&&on){cls+=' found';badge='✓';state=t('st.found');}
+        else if(trick&&!on){cls+=' missed';badge='!';state=t('st.missed');}
+        else if(!trick&&on){cls+=' wrong';badge='✗';state=t('st.wrong');}
+        else {badge='';}
+      } else if(on) cls+=' on';
+      const txt=(el.dataset.lbl||el.textContent).replace(/\s+/g,' ').trim().slice(0,110);
+      const label=ctx.checked?(state?`${state}: ${txt}`:txt):`${t('flag')} ${txt}`;
+      h+=`<button type="button" class="${cls}" data-k="${key}" aria-pressed="${on}" aria-label="${esc(label)}" style="${pos}"${ctx.checked?' disabled':''}>${badge?`<span class="badge" aria-hidden="true">${badge}</span>`:''}</button>`;
+    }
+  });
+  ov.innerHTML=h;
+  if(fk){const f=ov.querySelector(`[data-k="${fk}"]`); f&&!f.disabled&&f.focus();}
+}
+
+/* ---- simulation behaviour (step 0) ---- */
+function initGame(){
+  const g=GV.a; let gems=g.gems, claimed=false, day=g.day;
+  const setG=n=>{gems=n;$('#gemN').textContent=fmt(n);};
+  let secs=g.secs; timers.push(setInterval(()=>{secs--; if(secs<0) secs=g.secs; const c=$('#cd'); if(c) c.textContent=mmss(secs);},1000));
+  timers.push(setTimeout(()=>{const s=$('#toastSlot'); if(s&&!s.innerHTML) s.innerHTML=toastHTML('a');},7000));
+  const chest=()=>{
+    if(gems<g.chest) return say('gMsg',t('game.msg.poor',g.chest));
+    setG(gems-g.chest); const r=Math.random(); let reels,msg;
+    if(r<.06){reels='★ ★ ★';msg=t('game.win.legend',t('game.a.legend'));}
+    else if(r<.34){reels='★ ★ •';msg=t('game.near');}
+    else if(r<.6){reels='★ • ◆';msg=t('game.win.rare');}
+    else {reels='• ◆ •';msg=t('game.win.common');}
+    say('reels',reels); say('gMsg',msg);
+  };
+  simAPI={click(b){
+    const a=b.dataset.act;
+    if(a==='claim'){ if(claimed) return say('gMsg',t('game.msg.claimed')); claimed=true; setG(gems+50); day++; say('gMsg',t('game.msg.claim',day)); }
+    else if(a==='offer'){ if(gems>=g.item){setG(gems-g.item);say('gMsg',t('game.msg.got',t('game.a.item')));} else say('gMsg',t('game.msg.need',fmt(g.item-gems))); }
+    else if(a==='pack'){ const n=+b.dataset.n; setG(gems+n); say('gMsg',t('game.msg.pack',fmt(n))); }
+    else if(a==='chest') chest();
+    else if(a==='break') say('gMsg',t('game.break.msg'));
+  }};
+}
+function initShop(){
+  const s=SV.a; let joined=false, waitSeen=false;
+  const upd=()=>{$('#total').textContent=eur(s.price+($('#addon').checked?s.addon:0));};
+  const join=()=>{joined=true; $('#member').hidden=false; ctx.trig.add('hidden_cost'); say('sMsg',t('shop.msg.joined'));};
+  const setStep=n=>{$('#mBody').innerHTML=memberStep(n); const f=$('#mstep'); f&&f.focus(); ctx.trig.add('hard_cancel');};
+  simAPI={
+    change(el){ if(el.id==='addon'){upd();} },
+    click(b){
+      const a=b.dataset.act;
+      if(a==='join') join();
+      else if(a==='buy'){ if(!joined&&!waitSeen){waitSeen=true;$('#wait').hidden=false;ctx.trig.add('confirmshaming');$('#wait').focus();} else say('sMsg',t('shop.msg.ordered')); }
+      else if(a==='yes'){ $('#wait').hidden=true; join(); }
+      else if(a==='no'){ $('#wait').hidden=true; say('sMsg',t('shop.msg.ordered')); }
+      else if(a==='c1') setStep(1); else if(a==='c2') setStep(2); else if(a==='c3') setStep(3);
+      else if(a==='ckeep'){ $('#mBody').innerHTML=memberStep(0); say('sMsg',t('shop.msg.kept')); }
+    }};
+}
+function initSocial(){
+  const s=SC.a; let count=5, streak=s.streak, on=[true,true];
+  const feed=$('#feed');
+  feed.addEventListener('scroll',()=>{
+    ctx.trig.add('infinite_scroll');
+    if(feed.scrollTop+feed.clientHeight>=feed.scrollHeight-60){ let h=''; for(let i=0;i<4;i++) h+=postHTML(count+i); feed.insertAdjacentHTML('beforeend',h); count+=4; }
+    if(count>=14) $('#brk').hidden=false;
+  });
+  simAPI={click(b){
+    const a=b.dataset.act;
+    if(a==='refresh'){ if(Math.random()<.5){say('oMsg',t('soc.m.new'));$('#badge').textContent=String(+$('#badge').textContent+7);} else say('oMsg',t('soc.m.none')); }
+    else if(a==='snap'){ streak++; $('#streakT').textContent=t('soc.streak',s.friend,streak); say('oMsg',t('soc.m.snap',streak)); }
+    else if(a==='sw'){ const on2=b.getAttribute('aria-checked')!=='true'; b.setAttribute('aria-checked',on2); b.textContent=t(on2?'soc.on':'soc.off'); }
+    else if(a==='rest'){ say('oMsg',t('soc.m.rest')); $('#brk').hidden=true; }
+    else if(a==='keep'){ $('#brk').hidden=true; }
+  }};
+}
+
+function viewQuiz(m){
+  const q=S.quiz, N=QUIZ.length;
+  const opts=i=>{const a=[QUIZ[i].a].concat(QUIZ[i].d), k=i%3; return a.slice(k).concat(a.slice(0,k));};
+  if(!q.show){
+    m.innerHTML=`<button type="button" class="back" data-go="home">← ${t('back')}</button><h1 id="h1" tabindex="-1">${t('quiz.h')}</h1><p class="lead">${t('quiz.p')}</p>
+    <form id="qf" novalidate>${QUIZ.map((it,i)=>`<fieldset class="q"><legend>${i+1}. ${t('q'+(i+1))}</legend>${opts(i).map(id=>`<label class="qopt"><input type="radio" name="q${i}" value="${id}"${q.ans[i]===id?' checked':''}> <span>${t('p.'+id+'.name')}</span></label>`).join('')}</fieldset>`).join('')}
+    <p class="err" id="qerr" role="alert">${q.err?t('quiz.missing'):''}</p>
+    <div class="btns"><button type="button" class="btn primary" data-act3="submit">${t('quiz.submit')}</button></div></form>`;
+  } else {
+    const score=QUIZ.filter((it,i)=>q.ans[i]===it.a).length;
+    m.innerHTML=`<button type="button" class="back" data-go="home">← ${t('back')}</button><h1 id="h1" tabindex="-1">${t('quiz.h')}</h1>
+    <p class="score">${t('quiz.score',score,N)}</p>${q.pre!==null&&q.pre!==q.last?`<p>${t('quiz.cmp',q.pre,q.last,N)}</p>`:''}
+    <ol class="qres">${QUIZ.map((it,i)=>{const ok=q.ans[i]===it.a; return `<li><p><b>${t('q'+(i+1))}</b></p><p class="${ok?'k-good':'k-push'}"><b>${ok?t('quiz.right'):t('quiz.wrong',t('p.'+it.a+'.name'))}</b></p><p>${t('p.'+it.a+'.why')}</p></li>`;}).join('')}</ol>
+    <p class="note">${t('quiz.note')}</p><div class="btns"><button type="button" class="btn primary" data-act3="again">${t('quiz.again')}</button><button type="button" class="btn" data-go="home">${t('back')}</button></div>`;
+  }
+}
+function viewAbout(m){
+  const sec=(h,p)=>`<h2>${t(h)}</h2><p>${t(p)}</p>`;
+  m.innerHTML=`<button type="button" class="back" data-go="home">← ${t('back')}</button><div class="prose"><h1 id="h1" tabindex="-1">${t('about.h')}</h1><p class="lead">${t('about.p1')}</p>
+  ${sec('about.h.priv','about.p.priv')}${sec('about.h.rule','about.p.rule')}${sec('about.h.lang','about.p.lang')}${sec('about.h.a11y','about.p.a11y')}${sec('about.h.src','about.p.src')}
+  <h2>${t('about.h.open')}</h2><ul>${tl('about.open').map(x=>`<li>${x}</li>`).join('')}</ul></div>`;
+}
+
+/* ================= events ================= */
+document.addEventListener('change',e=>{
+  if(e.target.id==='langsel'){ lang=e.target.value; render(false); const s=$('#langsel'); s&&s.focus(); return; }
+  if(S.view==='scn'&&S.step===0&&simAPI&&simAPI.change&&e.target.closest('#wrap')){
+    const p=e.target.closest('[data-p]'); if(p) ctx.trig.add(p.dataset.p); simAPI.change(e.target);
+  }
+});
+document.addEventListener('click',e=>{
+  const T=e.target;
+  if(T.closest('[data-popclose]')){ clearPopup(); return; }
+  let b=T.closest('[data-go]'); if(b){ go(b.dataset.go); return; }
+  b=T.closest('[data-scn]'); if(b){ go('scn',b.dataset.scn); return; }
+  b=T.closest('[data-step]'); if(b&&!b.disabled){ S.step=+b.dataset.step; S.max=Math.max(S.max,S.step); render('#ph'); return; }
+  b=T.closest('[data-hl]'); if(b){ ctx.hl=ctx.hl===b.dataset.hl?null:b.dataset.hl; $$('[data-hl]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.hl===ctx.hl)); layout(); if(ctx.hl){const mk=$(`.mark[data-k="${ctx.hl}"]`); mk&&mk.scrollIntoView({block:'center',behavior:RM?'auto':'smooth'});} return; }
+  b=T.closest('.hit'); if(b&&!b.disabled){ const k=b.dataset.k; ctx.flags.has(k)?ctx.flags.delete(k):ctx.flags.add(k); layout(); say('cnt',t('marked',ctx.flags.size)); return; }
+  b=T.closest('[data-act2="check"]'); if(b){ ctx.checked=true; $('.panel').innerHTML=panel2(S.scn); refreshDecisions(); layout(); const r=$('#res'); r&&r.focus(); return; }
+  b=T.closest('[data-dec]'); if(b){ const [i,j]=b.dataset.dec.split(':').map(Number); ctx.dec[i]=j; refreshDecisions(); return; }
+  b=T.closest('[data-act3]'); if(b){
+    const q=S.quiz;
+    if(b.dataset.act3==='submit'){
+      let all=true; QUIZ.forEach((it,i)=>{const c=document.querySelector(`input[name="q${i}"]:checked`); if(c) q.ans[i]=c.value; else {all=false; delete q.ans[i];}});
+      if(!all){ q.err=true; render(false); const er=$('#qerr'); er&&er.scrollIntoView({block:'center'}); return; }
+      q.err=false; const score=QUIZ.filter((it,i)=>q.ans[i]===it.a).length; if(q.pre===null) q.pre=score; q.last=score; q.show=true; render(); window.scrollTo(0,0);
+    } else { q.show=false; q.ans={}; q.err=false; render(); window.scrollTo(0,0); }
+    return;
+  }
+  if(S.view==='scn'&&S.step===0&&simAPI&&simAPI.click){
+    const a=T.closest('#wrap [data-act]'); if(a){ const p=a.closest('[data-p]'); if(p) ctx.trig.add(p.dataset.p); simAPI.click(a); }
+  }
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') clearPopup(); });
+window.addEventListener('resize',()=>layout());
+render('');
+})();
+</script>
+</body>
+</html>
