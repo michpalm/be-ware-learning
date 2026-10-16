@@ -19,7 +19,7 @@ BeWare was made to accompany a policy submission on the EU KIDS Act (COM(2026) 6
 example of digital manipulation literacy through experiential education. It is a prototype of an
 approach, not evidence that the approach works.
 
-- Available in English and Swedish.
+- Available in English, Swedish and Spanish.
 - No accounts, no data collection, no storage. All money in the simulations is fake.
 - Outside the simulations, the app does not use the tricks it teaches.
 
